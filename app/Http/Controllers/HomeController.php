@@ -16,8 +16,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth');
-
+        
     }
 
     /**
@@ -31,8 +30,8 @@ class HomeController extends Controller
         $access_token = 'bearer '.$data['access_token'];
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         $req = $client->get('localhost:8000/api/auth/me', [
-            'headers' => [
-                'Authorization' => $access_token
+        'headers' => [
+            'Authorization' => $access_token
             ]
         ]);
         $response = $req->getBody()->getContents();
@@ -44,10 +43,10 @@ class HomeController extends Controller
             return view('home', compact('user'));
         } elseif ($code == 401) {
             Session::flash('success','Tokenmu habis');
-            return redirect()->route('logout');
+            return redirect()->route('logout.test');
         }
     }
-
+                
     public function login()
     {
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
@@ -59,5 +58,12 @@ class HomeController extends Controller
         ]);
         $response = $req->getBody()->getContents();
         dd($response);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->session()->invalidate();
+        Session::flash('success','Berhasil logout');
+        return redirect(route('login'));
     }
 }

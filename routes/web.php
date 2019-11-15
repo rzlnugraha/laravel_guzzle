@@ -17,5 +17,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::group(['middleware' => ['auth.api']], function () {
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/logoutest','HomeController@logout')->name('logout.test');
+});
 Route::get('/logintest','HomeController@login')->name('login.test');
