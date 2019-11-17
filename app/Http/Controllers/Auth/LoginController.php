@@ -47,7 +47,7 @@ class LoginController extends Controller
         $password = $request->password;
 
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
-        $req = $client->post('localhost:8000/api/auth/login', [
+        $req = $client->post('https://app-panjul.herokuapp.com/api/auth/login', [
             'form_params' => [
                 'email' => $email,
                 'password' => $password
@@ -56,14 +56,15 @@ class LoginController extends Controller
         $response = $req->getBody()->getContents();
         $dataLogin = json_decode($response, true);
         $code = $dataLogin['code'];
+        $message = $dataLogin['message'];
         if ($code == 200) {
             $access_token = 'bearer' . $dataLogin['content']['access_token'];
             session(['authenticate' => $dataLogin['content']]); //data token di simpan di session
-            Session::flash('success','Berhasil');
+            Session::flash('success',$message);
             return redirect()->route('home');
         } else {
+            Session::flash('error',$message);
             return redirect()->route('login');
         }
     }
-
 }

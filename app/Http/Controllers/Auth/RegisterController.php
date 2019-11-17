@@ -6,6 +6,9 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use Session;    
+
 
 class RegisterController extends Controller
 {
@@ -67,5 +70,38 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        $name = $request->name;
+        $email = $request->email;
+        $password = $request->password;
+        
+        $client = new \GuzzleHttp\Client(['http_errors' => false]);
+        $req = $client->post('https://app-panjul.herokuapp.com/api/auth/register', [
+            'form_params' => [
+                'name' => $name,
+                'email' => $email,
+                'password' => $password
+            ],
+        ]);
+        $response = $req->getBody()->getContents();
+        $dataLogin = json_decode($response, true);
+        $code = $dataLogin['code'];
+        $message = $dataLogin['message'];
+        if ($code == 200) {
+            Session::flash('success', $message);
+            return redirect()->route('home');
+        } else {
+            $error = "";
+            foreach ($dataLogin['contents'] as $key) {
+                // dd($key);
+                $error .=$key[0].'<br/>';
+            }
+            Session::flash('error', $error);
+            return redirect()->route('register');
+        }
+
     }
 }

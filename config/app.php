@@ -167,7 +167,8 @@ return [
         /*
          * Package Service Providers...
          */
-
+        
+        App\Providers\BladeServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -176,6 +177,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Yoeunes\Toastr\ToastrServiceProvider::class,
 
     ],
 

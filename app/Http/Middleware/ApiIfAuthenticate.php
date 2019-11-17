@@ -16,7 +16,7 @@ class ApiIfAuthenticate
     public function handle($request, Closure $next)
     {
         if (! session('authenticate')) {
-            Session::flash('success','Harus login');
+            Session::flash('error','Harus login');
             return redirect(route('login'));
         }
         return $next($request);

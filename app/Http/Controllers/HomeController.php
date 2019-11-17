@@ -29,7 +29,7 @@ class HomeController extends Controller
         $data = session('authenticate');
         $access_token = 'bearer '.$data['access_token'];
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
-        $req = $client->get('localhost:8000/api/auth/me', [
+        $req = $client->get('https://app-panjul.herokuapp.com/api/auth/me', [
         'headers' => [
             'Authorization' => $access_token
             ]
@@ -37,12 +37,12 @@ class HomeController extends Controller
         $response = $req->getBody()->getContents();
         $dataUser = json_decode($response);
         $code = $dataUser->code;
+        $message = $dataUser->message;
         if ($code == 200) {
-            Session::flash('success','Berhasil masuk');
             $user = $dataUser->content;
             return view('home', compact('user'));
         } elseif ($code == 401) {
-            Session::flash('success','Tokenmu habis');
+            Session::flash('error','Hohoho login heula');
             return redirect()->route('logout.test');
         }
     }
@@ -50,14 +50,13 @@ class HomeController extends Controller
     public function login()
     {
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
-        $req = $client->post('localhost:8000/api/auth/login', [
+        $req = $client->post('https://app-panjul.herokuapp.com/api/auth/login', [
             'form_params' => [
                 "email" => "ijal@mail.com",
                 "password" => "password"
             ]
         ]);
         $response = $req->getBody()->getContents();
-        dd($response);
     }
 
     public function logout(Request $request)
